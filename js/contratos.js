@@ -1,5 +1,6 @@
 /* =========================================================
-   BALANZ Contract Intelligence Platform v2.0 — contratos.js
+   BALANZ Contract Intelligence Platform v2.1 — contratos.js
+   Includes: legajo column, detail panel with legajo section
    ========================================================= */
 
 const Contratos = (() => {
@@ -23,13 +24,28 @@ const Contratos = (() => {
     return '<span class="badge-status vigente">Vigente</span>';
   }
 
+  function legajoBtn(c, size = 'normal') {
+    const sm = size === 'sm' ? 'font-size:0.72rem;padding:3px 8px' : '';
+    if (c.legajoUrl) {
+      return `<button class="btn-legajo has-legajo" style="${sm}" onclick="event.stopPropagation();LegajoPanel.open('${c.id}')" title="Ver legajo en SharePoint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        Ver legajo
+      </button>`;
+    }
+    if (!App.isLoggedIn()) return `<span style="font-size:0.7rem;color:var(--slate-400)">—</span>`;
+    return `<button class="btn-legajo no-legajo" style="${sm}" onclick="event.stopPropagation();LegajoPanel.openAdd('${c.id}')" title="Cargar link de legajo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+      Sin legajo
+    </button>`;
+  }
+
   function renderTable() {
     const start = (_page - 1) * PER_PAGE;
     const pageData = _filtered.slice(start, start + PER_PAGE);
     const tbody = document.getElementById('contratos-tbody');
     if (!tbody) return;
     if (pageData.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">${icon('search')}<p>No se encontraron contratos.</p></div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state">${icon('search')}<p>No se encontraron contratos.</p></div></td></tr>`;
       return;
     }
     tbody.innerHTML = pageData.map(c => `
@@ -41,6 +57,7 @@ const Contratos = (() => {
         <td style="color:var(--slate-600);font-size:0.8rem">${c.equipo||'—'}</td>
         <td style="color:var(--slate-600);font-size:0.8rem">${c.fa||'—'}</td>
         <td style="font-size:0.78rem;color:var(--slate-500)">${formatDate(c.fechaAltaContrato)}</td>
+        <td>${legajoBtn(c)}</td>
       </tr>
     `).join('');
     renderPagination();
@@ -86,13 +103,16 @@ const Contratos = (() => {
     const estado = document.getElementById('filter-estado')?.value||'';
     const equipo = document.getElementById('filter-equipo')?.value||'';
     const moneda = document.getElementById('filter-moneda')?.value||'';
+    const legajo = document.getElementById('filter-legajo')?.value||'';
+
     _filtered = App.getContratos().filter(c => {
       const ms = !search||((c.nombre||'').toLowerCase().includes(search)||(c.id||'').toLowerCase().includes(search)||(c.cuit||'').toString().includes(search)||(c.nroRef||'').toLowerCase().includes(search)||(c.equipo||'').toLowerCase().includes(search)||(c.fa||'').toLowerCase().includes(search)||(c.localidad||'').toLowerCase().includes(search)||(c.mail||'').toLowerCase().includes(search));
       const mt = !tipo||c.tipo===tipo;
       const me = !estado||c.estado===estado||(estado==='Incubadora'&&(c.incubadora||'').toLowerCase()==='si');
       const meq = !equipo||c.equipo===equipo;
       const mm = !moneda||(c.moneda||'').toLowerCase().includes(moneda.toLowerCase());
-      return ms&&mt&&me&&meq&&mm;
+      const ml = !legajo||(legajo==='con'?!!c.legajoUrl:!c.legajoUrl);
+      return ms&&mt&&me&&meq&&mm&&ml;
     });
     _filtered.sort((a,b)=>(a.nombre||'').localeCompare(b.nombre||''));
     _page = 1;
@@ -110,7 +130,7 @@ const Contratos = (() => {
     populateEquipoFilter();
     _filtered = [...App.getContratos()];
     applyFilters();
-    ['contratos-search','filter-tipo','filter-estado','filter-equipo','filter-moneda'].forEach(id => {
+    ['contratos-search','filter-tipo','filter-estado','filter-equipo','filter-moneda','filter-legajo'].forEach(id => {
       const el = document.getElementById(id);
       if (el) { el.oninput = applyFilters; el.onchange = applyFilters; }
     });
@@ -131,6 +151,37 @@ const Contratos = (() => {
       ${statusBadge(c)}
       ${c.nroRef?`<span class="table-id">${c.nroRef}</span>`:''}
       <span class="table-id">${c.id}</span>
+    `;
+
+    // Legajo section
+    const legajoHTML = c.legajoUrl ? `
+      <div class="detail-section">
+        <div class="detail-section-title">Legajo SharePoint</div>
+        <div style="background:var(--ice-50);border:1.5px solid var(--azure-100);border-radius:10px;padding:14px 16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:7px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--azure-400)"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              <span style="font-size:0.82rem;font-weight:600;color:var(--azure-500)">Legajo disponible</span>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="LegajoPanel.open('${c.id}')">
+              ${icon('external-link')} Ver legajo
+            </button>
+          </div>
+          <div style="font-size:0.72rem;color:var(--slate-500);word-break:break-all">${c.legajoTexto||'Carpeta en SharePoint'}</div>
+          ${App.isLoggedIn() ? `<button class="btn btn-ghost btn-sm" style="margin-top:8px;font-size:0.7rem" onclick="LegajoPanel.openEdit('${c.id}')">${icon('edit-3')} Editar link</button>` : ''}
+        </div>
+      </div>
+    ` : `
+      <div class="detail-section">
+        <div class="detail-section-title">Legajo SharePoint</div>
+        <div style="background:var(--slate-50);border:1.5px solid var(--slate-200);border-radius:10px;padding:14px 16px">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;color:var(--slate-400)"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="9" y1="1" x2="9" y2="6"/><line x1="3" y1="22" x2="21" y2="2"/></svg>
+            <span style="font-size:0.82rem;color:var(--slate-500)">Sin legajo cargado</span>
+          </div>
+          ${App.isLoggedIn() ? `<button class="btn btn-ghost btn-sm" onclick="LegajoPanel.openAdd('${c.id}')">${icon('plus')} Cargar link de legajo</button>` : ''}
+        </div>
+      </div>
     `;
 
     const historial = (c.historial||[]).slice(0,5);
@@ -164,6 +215,7 @@ const Contratos = (() => {
       </div>` : '';
 
     document.getElementById('detail-body-content').innerHTML = `
+      ${legajoHTML}
       <div class="detail-section">
         <div class="detail-section-title">Información General</div>
         <div class="detail-fields">
@@ -199,14 +251,13 @@ const Contratos = (() => {
 
     const editButtons = App.isLoggedIn() && c.estado !== 'Rescindido' ? `
       <button class="btn btn-primary btn-sm" onclick="FormPanel.openEdit('${c.id}')">${icon('edit-3')} Editar</button>
-      <button class="btn btn-ghost btn-sm" onclick="AdendaPanel.open('${c.id}')">${icon('plus')} Nueva adenda</button>
+      <button class="btn btn-ghost btn-sm" onclick="AdendaPanel.open('${c.id}')">${icon('plus')} Adenda</button>
       <button class="btn btn-danger btn-sm" onclick="BajaModal.open('${c.id}')">${icon('x-circle')} Dar de baja</button>
     ` : '';
 
     document.getElementById('detail-actions-content').innerHTML = `
       ${c.mail?`<a href="mailto:${c.mail.split(';')[0].trim()}" class="btn btn-ghost btn-sm">${icon('mail')} Contactar</a>`:''}
-      <button class="btn btn-ghost btn-sm" onclick="copyToClipboard('${c.nombre}')">${icon('clipboard')} Copiar nombre</button>
-      ${c.cuit?`<button class="btn btn-ghost btn-sm" onclick="copyToClipboard('${c.cuit}')">${icon('clipboard')} CUIT</button>`:''}
+      <button class="btn btn-ghost btn-sm" onclick="copyToClipboard('${c.nombre}')">${icon('clipboard')} Copiar</button>
       ${editButtons}
     `;
 
@@ -219,3 +270,57 @@ const Contratos = (() => {
 function copyToClipboard(text) {
   navigator.clipboard?.writeText(text).catch(()=>{});
 }
+
+/* ── Legajo Panel ────────────────────────────────────────── */
+const LegajoPanel = (() => {
+  let _id = null;
+
+  function open(id) {
+    const c = App.getContratoById(id);
+    if (!c || !c.legajoUrl) return;
+    // Open in new tab — SharePoint iframe is blocked by most tenants
+    window.open(c.legajoUrl, '_blank');
+  }
+
+  function openAdd(id) {
+    if (!App.isLoggedIn()) return;
+    _id = id;
+    const c = App.getContratoById(id);
+    document.getElementById('legajo-panel-title').textContent = 'Cargar link de legajo';
+    document.getElementById('legajo-nombre').textContent = c?.nombre || '';
+    document.getElementById('legajo-url-input').value = c?.legajoUrl || '';
+    document.getElementById('legajo-texto-input').value = c?.legajoTexto || '';
+    document.getElementById('legajo-add-panel').classList.add('open');
+  }
+
+  function openEdit(id) {
+    openAdd(id);
+    document.getElementById('legajo-panel-title').textContent = 'Editar link de legajo';
+  }
+
+  async function save() {
+    const url   = document.getElementById('legajo-url-input').value.trim();
+    const texto = document.getElementById('legajo-texto-input').value.trim();
+    if (!url) { alert('Ingresá la URL del legajo'); return; }
+    const btn = document.getElementById('legajo-save-btn');
+    btn.disabled = true;
+    btn.textContent = 'Guardando…';
+    const ok = await App.updateContrato(_id, { legajoUrl: url, legajoTexto: texto });
+    btn.disabled = false;
+    btn.textContent = 'Guardar';
+    if (ok) {
+      document.getElementById('legajo-add-panel').classList.remove('open');
+      const c = App.getContratoById(_id);
+      if (c) document.dispatchEvent(new CustomEvent('app:detail', { detail: { contrato: c } }));
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('legajo-save-btn')?.addEventListener('click', save);
+    document.getElementById('legajo-close')?.addEventListener('click', () => {
+      document.getElementById('legajo-add-panel').classList.remove('open');
+    });
+  });
+
+  return { open, openAdd, openEdit };
+})();
