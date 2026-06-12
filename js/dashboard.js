@@ -18,7 +18,7 @@ const Dashboard = (() => {
     ];
     const grid = document.getElementById("kpi-grid");
     grid.innerHTML = kpiData.map(k => `
-      <div class="kpi-card ${k.color}" onclick="KpiModal.open(\'${k.key}\')" style="cursor:pointer" title="Clic para ver detalle">
+      <div class="kpi-card ${k.color}" onclick="KpiModal.open('${k.key}')" style="cursor:pointer" title="Clic para ver detalle">
         <div class="kpi-icon ${k.color}">${icon(k.icon)}</div>
         <div class="kpi-value">${k.value.toLocaleString()}</div>
         <div class="kpi-label">${k.label}</div>
@@ -60,7 +60,7 @@ const Dashboard = (() => {
       { cls:"muted",    count:alerts.bajas,       title:"Rescindidos",         desc:"Historial de bajas",                  icon:"archive",        filter:"bajas"       },
     ];
     document.getElementById("alert-strips").innerHTML = strips.map(s => `
-      <div class="alert-strip ${s.cls}" onclick="Alertas.filterBy(\'${s.filter}\'); App.navigate(\'alertas\');" style="cursor:pointer">
+      <div class="alert-strip ${s.cls}" onclick="Alertas.filterBy('${s.filter}'); App.navigate('alertas');" style="cursor:pointer">
         <div class="alert-icon">${icon(s.icon)}</div>
         <div class="alert-info"><div class="alert-title">${s.title}</div><div class="alert-desc">${s.desc}</div></div>
         <div class="alert-count">${s.count}</div>
@@ -138,7 +138,7 @@ const KpiModal = (() => {
     if (tab === "lista") {
       if (!items.length) { body.innerHTML = `<div class="empty-state">${icon("file-text")}<p>No hay contratos.</p></div>`; return; }
       body.innerHTML = `<div style="font-size:0.72rem;color:var(--slate-500);margin-bottom:10px">${items.length} contratos</div>` +
-        items.slice(0,40).map(c => `<div onclick="App.closeKpiModal();App.selectContrato(\'${c.id}\')" style="display:flex;align-items:center;gap:10px;padding:7px 9px;border-radius:8px;cursor:pointer;border-bottom:1px solid var(--slate-100)" onmouseover="this.style.background=\'var(--ice-25)\'" onmouseout="this.style.background=\'transparent\'"><div style="flex:1;min-width:0;font-size:0.83rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.nombre}</div><span class="badge-tipo ${c.tipo}">${c.tipo}</span><span style="font-size:0.72rem;color:var(--slate-400);flex-shrink:0">${c.equipo||""}</span></div>`).join("") +
+        items.slice(0,40).map(c => `<div onclick="App.closeKpiModal();App.selectContrato('${c.id}')" style="display:flex;align-items:center;gap:10px;padding:7px 9px;border-radius:8px;cursor:pointer;border-bottom:1px solid var(--slate-100)" onmouseover="this.style.background='var(--ice-25)'" onmouseout="this.style.background='transparent'"><div style="flex:1;min-width:0;font-size:0.83rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.nombre}</div><span class="badge-tipo ${c.tipo}">${c.tipo}</span><span style="font-size:0.72rem;color:var(--slate-400);flex-shrink:0">${c.equipo||""}</span></div>`).join("") +
         (items.length > 40 ? `<div style="text-align:center;font-size:0.75rem;color:var(--slate-400);padding:8px">y ${items.length-40} más…</div>` : "");
     } else if (tab === "equipo") {
       const eq = {}; items.forEach(c => { if (c.equipo) eq[c.equipo]=(eq[c.equipo]||0)+1; });
