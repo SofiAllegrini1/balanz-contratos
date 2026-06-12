@@ -3,34 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BALANZ Contract Intelligence Platform</title>
+  <title>BALANZ Contract Intelligence Platform v2.0</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-<!-- ── Loading Screen ─────────────────────────────────────── -->
+<!-- ── Loading ────────────────────────────────────────────── -->
 <div class="loading-overlay" id="loading-overlay">
   <div class="loading-logo">
-    <div class="brand-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;color:white">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14,2 14,8 20,8"/>
-        <line x1="16" y1="13" x2="8" y2="13"/>
-        <line x1="16" y1="17" x2="8" y2="17"/>
-      </svg>
+    <div class="brand-icon" style="width:52px;height:52px;border-radius:14px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;color:white"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
     </div>
     <div>
       <div class="loading-name">BALANZ</div>
-      <div class="loading-platform">Contract Intelligence Platform</div>
+      <div class="loading-platform">Contract Intelligence Platform v2.0</div>
     </div>
   </div>
-  <div class="loading-bar-wrap">
-    <div class="loading-bar"></div>
-  </div>
+  <div class="loading-bar-wrap"><div class="loading-bar"></div></div>
   <div class="loading-text">Cargando base de contratos…</div>
 </div>
 
-<!-- ── App Shell ──────────────────────────────────────────── -->
+<!-- ── Login ──────────────────────────────────────────────── -->
+<div class="login-screen" id="login-screen" style="display:none">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="login-brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+      </div>
+      <div>
+        <div class="login-brand-name">BALANZ</div>
+        <div class="login-brand-sub">Contract Intelligence Platform</div>
+      </div>
+    </div>
+    <div class="login-title">Bienvenida</div>
+    <div class="login-subtitle">Ingresá con tu usuario de contratos para acceder al modo edición.</div>
+    <div class="login-error" id="login-error"></div>
+    <form id="login-form">
+      <div class="login-field">
+        <label>Usuario</label>
+        <input type="email" id="login-user" placeholder="tu@balanz.com" autocomplete="username">
+      </div>
+      <div class="login-field">
+        <label>Contraseña</label>
+        <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button type="submit" class="login-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10,17 15,12 10,7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Ingresar al modo edición
+      </button>
+    </form>
+    <div class="login-hint">Solo lectura disponible sin iniciar sesión — cerrá esta ventana para continuar.</div>
+    <div style="text-align:center;margin-top:10px">
+      <button onclick="document.getElementById('login-screen').style.display='none'" style="background:none;border:none;font-size:0.78rem;color:var(--slate-400);cursor:pointer;font-family:var(--font-sans)">Continuar sin editar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── App Shell ───────────────────────────────────────────── -->
 <div class="app-shell">
 
   <!-- ── Sidebar ─────────────────────────────────────────── -->
@@ -38,27 +67,37 @@
     <div class="sidebar-brand">
       <div class="brand-logo">
         <div class="brand-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
         </div>
         <div>
           <div class="brand-name">BALANZ</div>
         </div>
       </div>
-      <div class="brand-sub">Contract Intelligence Platform</div>
+      <div class="brand-sub">Contract Intelligence</div>
+    </div>
+
+    <!-- Edit mode indicator -->
+    <div class="edit-mode-indicator" id="edit-mode-indicator">
+      <div class="emi-label">✓ Modo Edición</div>
+      <div class="emi-user" id="emi-username"></div>
+      <div class="emi-logout" id="emi-logout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Cerrar sesión
+      </div>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Principal</div>
       <div class="nav-item" data-page="dashboard">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
         <span>Dashboard</span>
       </div>
       <div class="nav-item" data-page="contratos">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
         <span>Contratos</span>
       </div>
       <div class="nav-item" data-page="busqueda">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <span>Búsqueda</span>
       </div>
     </div>
@@ -66,16 +105,16 @@
     <div class="sidebar-section">
       <div class="sidebar-section-label">Gestión</div>
       <div class="nav-item" data-page="alertas">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span>Alertas</span>
         <span class="badge" id="nav-badge-alertas">—</span>
       </div>
       <div class="nav-item" data-page="renovaciones">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23,4 23,10 17,10"/><polyline points="1,20 1,14 7,14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23,4 23,10 17,10"/><polyline points="1,20 1,14 7,14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         <span>Adendas</span>
       </div>
       <div class="nav-item" data-page="equipos">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         <span>Equipos</span>
       </div>
     </div>
@@ -83,42 +122,46 @@
     <div class="sidebar-footer">
       <div class="sidebar-status">
         <div class="status-dot"></div>
-        <div class="status-text">Datos sincronizados</div>
+        <div class="status-text" id="status-text">Sincronizado con GitHub</div>
       </div>
     </div>
   </aside>
 
   <!-- ── Main ────────────────────────────────────────────── -->
   <div class="main-content">
-
-    <!-- ── Topbar ───────────────────────────────────────── -->
     <header class="topbar">
       <div>
         <div class="topbar-title" id="topbar-title">Dashboard Ejecutivo</div>
         <div class="topbar-subtitle" id="topbar-subtitle">Visión general de todos los contratos</div>
       </div>
-
       <div class="search-global">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="global-search-input" placeholder="Buscar contrato, CUIT, equipo…">
       </div>
-
       <div class="topbar-actions">
+        <div class="edit-mode-badge" id="edit-mode-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Modo Edición
+        </div>
         <div class="date-badge" id="topbar-date"></div>
         <div class="topbar-btn" title="Notificaciones" onclick="App.navigate('alertas')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           <span class="notif-dot"></span>
+        </div>
+        <div class="topbar-btn edit-only" title="Nuevo contrato" id="btn-new-contrato" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div class="topbar-btn" title="Modo edición" onclick="document.getElementById('login-screen').style.display='flex'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         </div>
       </div>
     </header>
 
     <!-- ============================================================ -->
-    <!-- PAGE: DASHBOARD                                               -->
+    <!-- PAGE: DASHBOARD -->
     <!-- ============================================================ -->
     <div class="page" id="page-dashboard">
       <div class="page-body">
-
-        <!-- Insights Banner -->
         <div class="insights-banner" id="insights-banner">
           <div class="insights-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:22px;height:22px;color:var(--azure-300)"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
@@ -127,71 +170,38 @@
             <div class="insights-title">Cargando análisis…</div>
           </div>
         </div>
-
-        <!-- KPIs -->
         <div class="section-header">
-          <div class="section-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;color:var(--azure-400)"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/></svg>
-            Indicadores Clave
-          </div>
-        </div>
-        <div class="kpi-grid" id="kpi-grid">
-          <!-- Populated by JS -->
-        </div>
-
-        <!-- Alerts -->
-        <div class="section-header">
-          <div class="section-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;color:var(--azure-400)"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            Centro de Alertas
-          </div>
-          <button class="btn btn-ghost btn-sm" onclick="App.navigate('alertas')">
-            Ver todas
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><polyline points="9,18 15,12 9,6"/></svg>
+          <div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/></svg>Indicadores Clave</div>
+          <button class="btn btn-primary btn-sm edit-only" id="btn-new-dash" style="display:none" onclick="FormPanel.openNew()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Nuevo contrato
           </button>
         </div>
-        <div class="alert-strips" id="alert-strips">
-          <!-- Populated by JS -->
-        </div>
-
-        <!-- Charts -->
+        <div class="kpi-grid" id="kpi-grid"></div>
         <div class="section-header">
-          <div class="section-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;color:var(--azure-400)"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-            Análisis y Distribución
-          </div>
+          <div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Centro de Alertas</div>
+          <button class="btn btn-ghost btn-sm" onclick="App.navigate('alertas')">Ver todas <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><polyline points="9,18 15,12 9,6"/></svg></button>
         </div>
+        <div class="alert-strips" id="alert-strips"></div>
+        <div class="section-header"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Análisis y Distribución</div></div>
         <div class="charts-grid">
-          <div class="chart-card">
-            <div class="chart-title">Contratos por Equipo</div>
-            <div id="chart-equipos"></div>
-          </div>
-          <div class="chart-card">
-            <div class="chart-title">Distribución por Tipo</div>
-            <div id="chart-tipos"></div>
-          </div>
-          <div class="chart-card">
-            <div class="chart-title">Top Localidades</div>
-            <div id="chart-localidades"></div>
-          </div>
-          <div class="chart-card">
-            <div class="chart-title">Distribución por Moneda</div>
-            <div id="chart-monedas"></div>
-          </div>
+          <div class="chart-card"><div class="chart-title">Contratos por Equipo</div><div id="chart-equipos"></div></div>
+          <div class="chart-card"><div class="chart-title">Distribución por Tipo</div><div id="chart-tipos"></div></div>
+          <div class="chart-card"><div class="chart-title">Top Localidades</div><div id="chart-localidades"></div></div>
+          <div class="chart-card"><div class="chart-title">Distribución por Moneda</div><div id="chart-monedas"></div></div>
         </div>
-
       </div>
     </div>
 
     <!-- ============================================================ -->
-    <!-- PAGE: CONTRATOS                                               -->
+    <!-- PAGE: CONTRATOS -->
     <!-- ============================================================ -->
     <div class="page" id="page-contratos">
       <div class="page-body">
         <div class="table-container">
           <div class="table-toolbar">
             <div class="table-search">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               <input type="text" id="contratos-search" placeholder="Buscar por nombre, CUIT, equipo…">
             </div>
             <select class="filter-select" id="filter-tipo">
@@ -207,33 +217,25 @@
               <option value="Rescindido">Rescindido</option>
               <option value="Incubadora">Incubadora</option>
             </select>
-            <select class="filter-select" id="filter-equipo">
-              <option value="">Todos los equipos</option>
-            </select>
+            <select class="filter-select" id="filter-equipo"><option value="">Todos los equipos</option></select>
             <select class="filter-select" id="filter-moneda">
               <option value="">Toda moneda</option>
               <option value="Pesos">Pesos</option>
               <option value="Dol">Dólares</option>
             </select>
-            <div style="margin-left:auto;font-size:0.78rem;color:var(--slate-500)">
-              <span id="contratos-count">—</span> contratos
+            <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+              <span id="contratos-count" style="font-size:0.78rem;color:var(--slate-500)">—</span>
+              <button class="btn btn-primary btn-sm edit-only" style="display:none" onclick="FormPanel.openNew()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Nuevo
+              </button>
             </div>
           </div>
           <table class="data-table">
-            <thead>
-              <tr>
-                <th>Nombre / CUIT</th>
-                <th>ID</th>
-                <th>Tipo</th>
-                <th>Estado</th>
-                <th>Equipo</th>
-                <th>FA</th>
-                <th>Alta</th>
-              </tr>
-            </thead>
-            <tbody id="contratos-tbody">
-              <tr><td colspan="7"><div class="empty-state"><p>Cargando…</p></div></td></tr>
-            </tbody>
+            <thead><tr>
+              <th>Nombre / CUIT</th><th>ID</th><th>Tipo</th><th>Estado</th><th>Equipo</th><th>FA</th><th>Alta</th>
+            </tr></thead>
+            <tbody id="contratos-tbody"><tr><td colspan="7"><div class="empty-state"><p>Cargando…</p></div></td></tr></tbody>
           </table>
           <div class="table-pagination">
             <div id="page-info">—</div>
@@ -244,133 +246,76 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- PAGE: ALERTAS                                                 -->
+    <!-- PAGE: ALERTAS -->
     <!-- ============================================================ -->
     <div class="page" id="page-alertas">
       <div class="page-body">
-
         <div class="section-header" style="margin-bottom:20px">
-          <div class="section-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:17px;height:17px;color:var(--azure-400)"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            Resumen de Alertas
-          </div>
+          <div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Resumen de Alertas</div>
         </div>
-        <div class="alert-strips" id="alertas-summary" style="margin-bottom:32px">
-          <!-- Populated by JS -->
-        </div>
-
-        <div id="alertas-detail">
-          <!-- Populated by JS -->
-        </div>
+        <div class="alert-strips" id="alertas-summary" style="margin-bottom:32px"></div>
+        <div id="alertas-detail"></div>
       </div>
     </div>
 
     <!-- ============================================================ -->
-    <!-- PAGE: RENOVACIONES / ADENDAS                                  -->
+    <!-- PAGE: RENOVACIONES -->
     <!-- ============================================================ -->
     <div class="page" id="page-renovaciones">
       <div class="page-body">
-
-        <div class="kpi-grid" style="margin-bottom:28px;grid-template-columns:repeat(auto-fill,minmax(160px,1fr))">
-          <div class="kpi-card blue">
-            <div class="kpi-icon blue">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><polyline points="23,4 23,10 17,10"/><polyline points="1,20 1,14 7,14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-            </div>
-            <div class="kpi-value" id="renov-total">—</div>
-            <div class="kpi-label">Contratos con Adendas</div>
-          </div>
-          <div class="kpi-card green">
-            <div class="kpi-icon green">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-            </div>
-            <div class="kpi-value" id="renov-adendas">—</div>
-            <div class="kpi-label">Total Adendas</div>
-          </div>
-          <div id="renov-breakdown" style="display:contents"></div>
-        </div>
-
-        <div class="section-header">
-          <div class="section-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:17px;height:17px;color:var(--azure-400)"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            Historial de Adendas y Modificaciones
-          </div>
-        </div>
-        <div class="timeline-list" id="renov-timeline">
-          <!-- Populated by JS -->
-        </div>
+        <div class="kpi-grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));margin-bottom:28px" id="ren-kpis"></div>
+        <div class="section-header"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Historial de Adendas</div></div>
+        <div id="renov-timeline"></div>
       </div>
     </div>
 
     <!-- ============================================================ -->
-    <!-- PAGE: EQUIPOS                                                 -->
+    <!-- PAGE: EQUIPOS -->
     <!-- ============================================================ -->
     <div class="page" id="page-equipos">
       <div class="page-body">
-
-        <div class="section-header">
-          <div class="section-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:17px;height:17px;color:var(--azure-400)"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            Equipos — Contratos Vigentes
-          </div>
-        </div>
+        <div class="section-header"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Equipos — Contratos Vigentes</div></div>
         <div class="team-grid" id="equipos-grid" style="margin-bottom:32px"></div>
-
         <div class="charts-grid">
-          <div class="chart-card">
-            <div class="chart-title">Contratos por FA (Funcionario Asignado)</div>
-            <div id="fa-chart"></div>
-          </div>
-          <div class="chart-card">
-            <div class="chart-title">Distribución Geográfica</div>
-            <div id="loc-chart"></div>
-          </div>
+          <div class="chart-card"><div class="chart-title">Por FA (Funcionario Asignado)</div><div id="fa-chart"></div></div>
+          <div class="chart-card"><div class="chart-title">Distribución Geográfica</div><div id="loc-chart"></div></div>
         </div>
       </div>
     </div>
 
     <!-- ============================================================ -->
-    <!-- PAGE: BÚSQUEDA                                                -->
+    <!-- PAGE: BÚSQUEDA -->
     <!-- ============================================================ -->
     <div class="page" id="page-busqueda">
       <div class="page-body">
-
         <div class="table-container" style="margin-bottom:20px;overflow:visible">
           <div style="padding:20px 24px">
-            <div class="search-global" style="width:100%;max-width:600px;padding:12px 18px;border-radius:12px;border-color:var(--slate-300)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input type="text" id="busqueda-input" placeholder="Buscar por nombre, CUIT, equipo, localidad, email, observaciones…" style="font-size:0.95rem">
-            </div>
-            <div style="margin-top:10px;font-size:0.75rem;color:var(--slate-400)">
-              Busca en todos los campos: nombre, CUIT, número de referencia, equipo, FA, localidad, email, observaciones.
+            <div class="search-global" style="width:100%;max-width:600px;padding:12px 18px;border-radius:12px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="busqueda-input" placeholder="Buscar en todos los campos…" style="font-size:0.95rem" oninput="Busqueda.render(this.value)">
             </div>
           </div>
         </div>
-
         <div class="section-header">
           <div class="section-title">Resultados</div>
-          <div style="font-size:0.78rem;color:var(--slate-500)" id="busqueda-count"></div>
+          <span id="busqueda-count" style="font-size:0.78rem;color:var(--slate-500)"></span>
         </div>
-
         <div class="table-container">
           <div id="busqueda-results" style="padding:16px">
-            <div class="empty-state">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:40px;height:40px;opacity:0.3"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <p>Ingresá un término para buscar en todos los contratos.</p>
-            </div>
+            <div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Ingresá un término para buscar.</p></div>
           </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
 
-  </div><!-- end main-content -->
-</div><!-- end app-shell -->
-
-<!-- ── Detail Panel ──────────────────────────────────────────────── -->
+<!-- ── Detail Panel ───────────────────────────────────────── -->
 <div class="detail-overlay" id="detail-overlay">
   <div class="detail-panel">
     <div class="detail-header">
       <button class="detail-close" id="detail-close">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
       <div class="detail-title" id="detail-title">—</div>
       <div class="detail-meta" id="detail-meta-content"></div>
@@ -380,18 +325,103 @@
   </div>
 </div>
 
-<!-- ── Scripts ──────────────────────────────────────────────────── -->
+<!-- ── Form Panel (New / Edit) ────────────────────────────── -->
+<div class="form-overlay" id="form-overlay">
+  <div class="form-panel">
+    <div class="form-panel-header">
+      <button class="form-close" id="form-close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="form-panel-title" id="form-panel-title">Nuevo contrato</div>
+      <div class="form-panel-sub" id="form-panel-sub">Completá los campos obligatorios (*)</div>
+    </div>
+    <div class="form-body">
+      <div class="form-error" id="form-error"></div>
+      <div id="form-body-content"></div>
+    </div>
+    <div class="form-footer">
+      <button class="btn btn-ghost" onclick="App.closeForm()">Cancelar</button>
+      <button class="btn btn-primary" id="form-save-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="20,6 9,17 4,12"/></svg>
+        Guardar contrato
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Baja Modal ─────────────────────────────────────────── -->
+<div class="modal-overlay" id="baja-modal">
+  <div class="modal-card">
+    <div class="modal-icon danger">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+    </div>
+    <div class="modal-title">Rescindir contrato</div>
+    <div class="modal-desc">Estás por dar de baja a <strong id="baja-nombre">—</strong>. El contrato pasará al estado <em>Rescindido</em> y quedará en el historial.</div>
+    <div class="modal-field">
+      <label>Fecha de rescisión *</label>
+      <input type="date" id="baja-fecha">
+    </div>
+    <div class="modal-field">
+      <label>Motivo</label>
+      <textarea id="baja-motivo" placeholder="Ej: solicitud del productor, vencimiento…"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="modal-cancel">Cancelar</button>
+      <button class="btn btn-danger" id="modal-confirm-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+        Confirmar baja
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Adenda Panel ───────────────────────────────────────── -->
+<div class="form-overlay" id="adenda-panel">
+  <div class="form-panel" style="width:440px">
+    <div class="form-panel-header">
+      <button class="form-close" id="adenda-close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="form-panel-title">Nueva adenda</div>
+      <div class="form-panel-sub" id="adenda-nombre">—</div>
+    </div>
+    <div class="form-body">
+      <div class="form-section-title">Datos de la modificación</div>
+      <div class="form-grid" style="grid-template-columns:1fr">
+        <div class="form-group">
+          <label>Modificación <span class="req">*</span></label>
+          <input class="form-input" id="adenda-modificacion" placeholder="Ej: cambio de porcentaje al 70%">
+        </div>
+        <div class="form-group">
+          <label>Fecha de la adenda <span class="req">*</span></label>
+          <input class="form-input" id="adenda-fecha" type="date">
+        </div>
+        <div class="form-group">
+          <label>Observaciones</label>
+          <textarea class="form-textarea" id="adenda-obs" placeholder="Detalles adicionales…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="form-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('adenda-panel').classList.remove('open')">Cancelar</button>
+      <button class="btn btn-primary" id="adenda-save-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="20,6 9,17 4,12"/></svg>
+        Guardar adenda
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Saving Toast ───────────────────────────────────────── -->
+<div class="saving-toast" id="saving-toast"></div>
+
+<!-- ── Scripts ────────────────────────────────────────────── -->
 <script src="js/dashboard.js"></script>
 <script src="js/contratos.js"></script>
 <script src="js/alertas.js"></script>
+<script src="js/form.js"></script>
 <script src="js/app.js"></script>
 <script>
-  // Set date badge
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('es-AR', { weekday:'short', day:'2-digit', month:'short', year:'numeric' });
-  document.getElementById('topbar-date').textContent = dateStr;
-
-  // Update alert badge after data load
   document.addEventListener('app:navigate', (e) => {
     if (e.detail.page === 'dashboard') {
       const alerts = App.getAlerts();
@@ -401,10 +431,12 @@
         badge.textContent = total;
         badge.className = 'badge' + (total > 20 ? '' : ' amber');
       }
+      // show edit-only elements
+      if (App.isLoggedIn()) {
+        document.getElementById('btn-new-dash').style.display = '';
+      }
     }
   });
-
-  // Init
   App.init();
 </script>
 
