@@ -7,7 +7,7 @@ const GITHUB_CONFIG = {
   owner: 'SofiAllegrini1',
   repo: 'balanz-contratos',
   file: 'data/contratos.json',
-  token: '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'
+  token: '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'
 };
 
 const AUTH_CONFIG = {
