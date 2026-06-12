@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BALANZ Contract Intelligence Platform v2.0</title>
   <link rel="stylesheet" href="css/styles.css">
+<style>
+.btn-legajo { display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:7px;font-size:0.75rem;font-weight:600;cursor:pointer;border:1.5px solid;transition:all 150ms;font-family:var(--font-sans); }
+.btn-legajo.has-legajo { background:var(--ice-50);color:var(--azure-500);border-color:var(--azure-100); }
+.btn-legajo.has-legajo:hover { background:var(--azure-100);border-color:var(--azure-300); }
+.btn-legajo.no-legajo { background:var(--slate-50);color:var(--slate-400);border-color:var(--slate-200); }
+.btn-legajo.no-legajo:hover { background:var(--slate-100);border-color:var(--slate-300); }
+.kpi-tab { transition:color 150ms; }
+.kpi-tab.active { color:var(--azure-500) !important;border-bottom-color:var(--azure-400) !important; }
+</style>
 </head>
 <body>
 
@@ -223,6 +232,11 @@
               <option value="Pesos">Pesos</option>
               <option value="Dol">Dólares</option>
             </select>
+            <select class="filter-select" id="filter-legajo">
+              <option value="">Todo legajo</option>
+              <option value="con">Con legajo</option>
+              <option value="sin">Sin legajo</option>
+            </select>
             <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
               <span id="contratos-count" style="font-size:0.78rem;color:var(--slate-500)">—</span>
               <button class="btn btn-primary btn-sm edit-only" style="display:none" onclick="FormPanel.openNew()">
@@ -233,7 +247,7 @@
           </div>
           <table class="data-table">
             <thead><tr>
-              <th>Nombre / CUIT</th><th>ID</th><th>Tipo</th><th>Estado</th><th>Equipo</th><th>FA</th><th>Alta</th>
+              <th>Nombre / CUIT</th><th>ID</th><th>Tipo</th><th>Estado</th><th>Equipo</th><th>FA</th><th>Alta</th><th>Legajo</th>
             </tr></thead>
             <tbody id="contratos-tbody"><tr><td colspan="7"><div class="empty-state"><p>Cargando…</p></div></td></tr></tbody>
           </table>
@@ -310,6 +324,38 @@
   </div>
 </div>
 
+<!-- ── KPI Modal ──────────────────────────────────────────── -->
+<div class="modal-overlay" id="kpi-modal">
+  <div class="modal-card" style="width:520px;max-width:95vw">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div id="kpi-modal-icon" style="width:32px;height:32px;flex-shrink:0"></div>
+        <div id="kpi-modal-title" style="font-size:1.05rem;font-weight:700;color:var(--slate-900)">—</div>
+      </div>
+      <button class="detail-close" id="kpi-modal-close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div style="display:flex;border-bottom:1px solid var(--slate-200);margin-bottom:16px">
+      <div class="kpi-tab active" data-tab="lista" style="padding:8px 14px;font-size:0.82rem;font-weight:600;cursor:pointer;border-bottom:2px solid var(--azure-400);color:var(--azure-500)">Lista</div>
+      <div class="kpi-tab" data-tab="equipo" style="padding:8px 14px;font-size:0.82rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:var(--slate-500)">Por equipo</div>
+      <div class="kpi-tab" data-tab="tipo" style="padding:8px 14px;font-size:0.82rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:var(--slate-500)">Por tipo</div>
+      <div class="kpi-tab" data-tab="evolucion" style="padding:8px 14px;font-size:0.82rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:var(--slate-500)">Evolución</div>
+    </div>
+    <div id="kpi-modal-body" style="max-height:360px;overflow-y:auto;min-height:120px"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:12px;border-top:1px solid var(--slate-100)">
+      <span style="font-size:0.75rem;color:var(--slate-400)">Hacé clic en un contrato para ver el detalle</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="App.closeKpiModal()">Cerrar</button>
+        <button class="btn btn-primary btn-sm" id="kpi-modal-goto">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+          Ver todos
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── Detail Panel ───────────────────────────────────────── -->
 <div class="detail-overlay" id="detail-overlay">
   <div class="detail-panel">
@@ -344,6 +390,39 @@
       <button class="btn btn-primary" id="form-save-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="20,6 9,17 4,12"/></svg>
         Guardar contrato
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Legajo Add/Edit Panel ─────────────────────────────── -->
+<div class="form-overlay" id="legajo-add-panel">
+  <div class="form-panel" style="width:420px">
+    <div class="form-panel-header">
+      <button class="form-close" id="legajo-close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="form-panel-title" id="legajo-panel-title">Cargar link de legajo</div>
+      <div class="form-panel-sub" id="legajo-nombre">—</div>
+    </div>
+    <div class="form-body">
+      <div class="form-section-title">Link del legajo en SharePoint</div>
+      <div class="form-grid" style="grid-template-columns:1fr">
+        <div class="form-group">
+          <label>URL de SharePoint <span class="req">*</span></label>
+          <input class="form-input" id="legajo-url-input" placeholder="https://balanz.sharepoint.com/...">
+        </div>
+        <div class="form-group">
+          <label>Nombre del legajo (opcional)</label>
+          <input class="form-input" id="legajo-texto-input" placeholder="Ej: Hernan Schvarz (GB)">
+        </div>
+      </div>
+    </div>
+    <div class="form-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('legajo-add-panel').classList.remove('open')">Cancelar</button>
+      <button class="btn btn-primary" id="legajo-save-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="20,6 9,17 4,12"/></svg>
+        Guardar
       </button>
     </div>
   </div>
