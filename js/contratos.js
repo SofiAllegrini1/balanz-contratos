@@ -27,10 +27,10 @@ const Contratos = (() => {
   function legajoBtn(c, size = 'normal') {
     const sm = size === 'sm' ? 'font-size:0.72rem;padding:3px 8px' : '';
     if (c.legajoUrl) {
-      return `<button class="btn-legajo has-legajo" style="${sm}" onclick="event.stopPropagation();LegajoPanel.open('${c.id}')" title="Ver legajo en SharePoint">
+      return `<a class="btn-legajo has-legajo" style="${sm};text-decoration:none" href="${c.legajoUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Ver legajo en SharePoint">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
         Ver legajo
-      </button>`;
+      </a>`;
     }
     if (!App.isLoggedIn()) return `<span style="font-size:0.7rem;color:var(--slate-400)">—</span>`;
     return `<button class="btn-legajo no-legajo" style="${sm}" onclick="event.stopPropagation();LegajoPanel.openAdd('${c.id}')" title="Cargar link de legajo">
@@ -163,9 +163,9 @@ const Contratos = (() => {
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--azure-400)"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
               <span style="font-size:0.82rem;font-weight:600;color:var(--azure-500)">Legajo disponible</span>
             </div>
-            <button class="btn btn-primary btn-sm" onclick="LegajoPanel.open('${c.id}')">
+            <a class="btn btn-primary btn-sm" href="${c.legajoUrl}" target="_blank" rel="noopener noreferrer" style="text-decoration:none">
               ${icon('external-link')} Ver legajo
-            </button>
+            </a>
           </div>
           <div style="font-size:0.72rem;color:var(--slate-500);word-break:break-all">${c.legajoTexto||'Carpeta en SharePoint'}</div>
           ${App.isLoggedIn() ? `<button class="btn btn-ghost btn-sm" style="margin-top:8px;font-size:0.7rem" onclick="LegajoPanel.openEdit('${c.id}')">${icon('edit-3')} Editar link</button>` : ''}
@@ -278,8 +278,13 @@ const LegajoPanel = (() => {
   function open(id) {
     const c = App.getContratoById(id);
     if (!c || !c.legajoUrl) return;
-    // Open in new tab — SharePoint iframe is blocked by most tenants
-    window.open(c.legajoUrl, '_blank');
+    const a = document.createElement('a');
+    a.href = c.legajoUrl;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 
   function openAdd(id) {
