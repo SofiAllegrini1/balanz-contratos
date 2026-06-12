@@ -51,12 +51,11 @@ const Contratos = (() => {
     tbody.innerHTML = pageData.map(c => `
       <tr onclick="App.selectContrato('${c.id}')">
         <td><div style="display:flex;flex-direction:column;gap:2px"><div class="table-name" title="${c.nombre}">${c.nombre}</div><div style="font-size:0.7rem;color:var(--slate-400)">${c.cuit||''}</div></div></td>
-        <td><span class="table-id">${c.id}</span></td>
         <td><span class="badge-tipo ${c.tipo}">${c.tipo}</span></td>
         <td>${statusBadge(c)}</td>
         <td style="color:var(--slate-600);font-size:0.8rem">${c.equipo||'—'}</td>
-        <td style="color:var(--slate-600);font-size:0.8rem">${c.fa||'—'}</td>
         <td style="font-size:0.78rem;color:var(--slate-500)">${formatDate(c.fechaAltaContrato)}</td>
+        <td style="font-size:0.78rem;font-weight:600;color:var(--azure-500)">${c.porcentaje||'—'}</td>
         <td>${legajoBtn(c)}</td>
       </tr>
     `).join('');
