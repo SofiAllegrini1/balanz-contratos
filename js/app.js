@@ -358,3 +358,11 @@ const App = (() => {
     isLoggedIn, getCurrentUser, showToast
   };
 })();
+
+// Additional v2.1 methods added to App
+const _AppExt = {
+  closeKpiModal() {
+    document.getElementById('kpi-modal')?.classList.remove('open');
+  }
+};
+Object.assign(App, _AppExt);
