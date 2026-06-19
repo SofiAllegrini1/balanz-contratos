@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BALANZ Contract Intelligence Platform v2.2</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .btn-legajo{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:7px;font-size:0.75rem;font-weight:600;cursor:pointer;border:1.5px solid;transition:all 150ms;font-family:var(--font-sans)}
+    .btn-legajo.has-legajo{background:var(--ice-50);color:var(--azure-500);border-color:var(--azure-100)}
+    .btn-legajo.has-legajo:hover{background:var(--azure-100);border-color:var(--azure-300)}
+    .btn-legajo.no-legajo{background:var(--slate-50);color:var(--slate-400);border-color:var(--slate-200)}
+    .kpi-tab{transition:color 150ms}.kpi-tab.active{color:var(--azure-500)!important;border-bottom-color:var(--azure-400)!important}
+    .fecha-res{font-size:0.78rem;font-weight:600;color:#b91c1c}
+    .comision-badge{font-size:0.75rem;font-weight:600;color:var(--azure-500);background:var(--ice-50);padding:2px 8px;border-radius:6px;white-space:nowrap;display:inline-block;border:1px solid var(--azure-100)}
+  </style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-logo">
+    <div class="brand-icon" style="width:52px;height:52px;border-radius:14px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;color:white"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+    </div>
+    <div><div class="loading-name">BALANZ</div><div class="loading-platform">Contract Intelligence Platform v2.2</div></div>
+  </div>
+  <div class="loading-bar-wrap"><div class="loading-bar"></div></div>
+  <div class="loading-text">Cargando base de contratos…</div>
+</div>
+
+<div class="login-screen" id="login-screen" style="display:none">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="login-brand-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg></div>
+      <div><div class="login-brand-name">BALANZ</div><div class="login-brand-sub">Contract Intelligence Platform</div></div>
+    </div>
+    <div class="login-title">Bienvenida</div>
+    <div class="login-subtitle">Ingresá con tu usuario y contraseña para acceder a la plataforma.</div>
+    <div class="login-error" id="login-error"></div>
+    <form id="login-form">
+      <div class="login-field"><label>Usuario</label><input type="email" id="login-user" placeholder="tu@balanz.com"></div>
+      <div class="login-field"><label>Contraseña</label><input type="password" id="login-pass" placeholder="••••••••"></div>
+      <button type="submit" class="login-btn">Ingresar</button>
+    </form>
+  </div>
+</div>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <div class="brand-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg></div>
+        <div><div class="brand-name">BALANZ</div></div>
+      </div>
+      <div class="brand-sub">Contract Intelligence</div>
+    </div>
+    <div class="edit-mode-indicator" id="edit-mode-indicator">
+      <div class="emi-label">✓ Modo Edición</div>
+      <div class="emi-user" id="emi-username"></div>
+      <div class="emi-logout" id="emi-logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Cerrar sesión</div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Principal</div>
+      <div class="nav-item" data-page="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Dashboard</span></div>
+      <div class="nav-item" data-page="contratos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg><span>Contratos</span></div>
+      <div class="nav-item" data-page="busqueda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Búsqueda</span></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Gestión</div>
+      <div class="nav-item" data-page="alertas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span>Alertas</span><span class="badge" id="nav-badge-alertas">—</span></div>
+      <div class="nav-item" data-page="renovaciones"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23,4 23,10 17,10"/><polyline points="1,20 1,14 7,14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>Adendas</span></div>
+      <div class="nav-item" data-page="equipos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Equipos</span></div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="sidebar-status"><div class="status-dot"></div><div class="status-text">Sincronizado con GitHub</div></div>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <div><div class="topbar-title" id="topbar-title">Dashboard</div><div class="topbar-subtitle" id="topbar-subtitle"></div></div>
+      <div class="search-global"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="global-search-input" placeholder="Buscar contrato, CUIT, equipo…"></div>
+      <div class="topbar-actions">
+        <div class="edit-mode-badge" id="edit-mode-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Modo Edición</div>
+        <div class="date-badge" id="topbar-date"></div>
+        <div class="topbar-btn" onclick="App.navigate('alertas')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="notif-dot"></span></div>
+        <div class="topbar-btn edit-only" id="btn-new-contrato" style="display:none" title="Nuevo contrato"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        <div class="topbar-btn" onclick="document.getElementById('login-screen').style.display='flex'" title="Modo edición"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      </div>
+    </header>
+
+    <!-- DASHBOARD -->
+    <div class="page" id="page-dashboard">
+      <div class="page-body">
+        <div class="section-header">
+          <div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:17px;height:17px;color:var(--azure-400)"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/></svg>Portafolio activo</div>
+          <button class="changes-btn" id="changes-btn" onclick="ChangesPanel.open()" style="display:none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><polyline points="1,4 1,10 7,10"/><path d="M3.51 15a9 9 0 1 0 .49-5"/></svg>
+            Cambios del mes <span class="ch-badge" id="changes-badge">0</span>
+          </button>
+        </div>
+        <div class="kpi-grid" id="kpi-grid" style="grid-template-columns:repeat(4,1fr)"></div>
+
+        <div class="section-header" style="margin-top:8px">
+          <div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:17px;height:17px;color:var(--azure-400)"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Centro de Alertas</div>
+          <button class="btn btn-ghost btn-sm" onclick="App.navigate('alertas')">Ver todas <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><polyline points="9,18 15,12 9,6"/></svg></button>
+        </div>
+        <div class="alert-banner" id="alert-banner"></div>
+        <div class="alert-strips" id="alert-strips"></div>
+
+        <div class="section-header">
+          <div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:17px;height:17px;color:var(--azure-400)"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Análisis</div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-card"><div class="chart-title">Tendencia — altas vs bajas (últimos 6 meses)</div><div id="chart-tendencia"></div></div>
+          <div class="chart-card"><div class="chart-title">Contratos por Equipo</div><div id="chart-equipos"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTRATOS -->
+    <div class="page" id="page-contratos">
+      <div class="page-body">
+        <div class="main-tabs">
+          <div class="main-tab active" data-tab="vigentes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>Vigentes <span class="tab-pill" id="tab-vigentes-count">—</span></div>
+          <div class="main-tab tab-res" data-tab="rescindidos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>Rescindidos <span class="tab-pill" id="tab-rescindidos-count">—</span></div>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+            <span id="contratos-count" style="font-size:0.78rem;color:var(--slate-500)">—</span>
+            <button class="btn btn-primary btn-sm edit-only" style="display:none" onclick="FormPanel.openNew()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nuevo</button>
+          </div>
+        </div>
+        <div class="table-container">
+          <div class="table-toolbar">
+            <div class="table-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="contratos-search" placeholder="Buscar por nombre, CUIT…"></div>
+            <select class="filter-select" id="filter-tipo"><option value="">Todos los tipos</option><option value="AP">AP</option><option value="REF">REF</option><option value="PE">PE</option><option value="AAGI">AAGI</option></select>
+            <select class="filter-select" id="filter-equipo"><option value="">Todos los equipos</option></select>
+            <select class="filter-select" id="filter-moneda"><option value="">Toda moneda</option><option value="Pesos">Pesos</option><option value="Dol">Dólares</option></select>
+            <select class="filter-select" id="filter-legajo"><option value="">Todo legajo</option><option value="con">Con legajo</option><option value="sin">Sin legajo</option></select>
+          </div>
+          <table class="data-table"><thead id="contratos-thead"><tr><th>Nombre / CUIT</th><th>Tipo</th><th>Estado</th><th>Equipo</th><th>Alta</th><th>Comisión</th><th>Legajo</th></tr></thead><tbody id="contratos-tbody"></tbody></table>
+          <div class="table-pagination"><div id="page-info">—</div><div class="pagination-btns" id="page-btns"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALERTAS -->
+    <div class="page" id="page-alertas">
+      <div class="page-body">
+        <div class="section-header" style="margin-bottom:20px"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:17px;height:17px;color:var(--azure-400)"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>Resumen de Alertas</div></div>
+        <div class="alert-strips" id="alertas-summary" style="margin-bottom:32px"></div>
+        <div id="alertas-detail"></div>
+      </div>
+    </div>
+
+    <!-- ADENDAS -->
+    <div class="page" id="page-renovaciones">
+      <div class="page-body">
+        <div class="kpi-grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));margin-bottom:28px" id="ren-kpis"></div>
+        <div class="section-header"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:17px;height:17px;color:var(--azure-400)"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Historial de Adendas</div></div>
+        <div id="renov-timeline"></div>
+      </div>
+    </div>
+
+    <!-- EQUIPOS -->
+    <div class="page" id="page-equipos">
+      <div class="page-body">
+        <div class="section-header"><div class="section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:17px;height:17px;color:var(--azure-400)"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Equipos Vigentes</div></div>
+        <div class="team-grid" id="equipos-grid" style="margin-bottom:32px"></div>
+        <div class="charts-grid">
+          <div class="chart-card"><div class="chart-title">Por FA</div><div id="fa-chart"></div></div>
+          <div class="chart-card"><div class="chart-title">Distribución Geográfica</div><div id="loc-chart"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BÚSQUEDA -->
+    <div class="page" id="page-busqueda">
+      <div class="page-body">
+        <div class="table-container" style="margin-bottom:20px;overflow:visible"><div style="padding:20px 24px"><div class="search-global" style="width:100%;max-width:600px;padding:12px 18px;border-radius:12px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="busqueda-input" placeholder="Buscar en todos los campos…" style="font-size:0.95rem" oninput="Busqueda.render(this.value)"></div></div></div>
+        <div class="section-header"><div class="section-title">Resultados</div><span id="busqueda-count" style="font-size:0.78rem;color:var(--slate-500)"></span></div>
+        <div class="table-container"><div id="busqueda-results" style="padding:16px"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:40px;height:40px;opacity:.3"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Ingresá un término para buscar.</p></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Panel -->
+<div class="detail-overlay" id="detail-overlay">
+  <div class="detail-panel">
+    <div class="detail-header">
+      <button class="detail-close" id="detail-close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <div class="detail-title" id="detail-title">—</div>
+      <div class="detail-meta" id="detail-meta-content"></div>
+    </div>
+    <div class="detail-body" id="detail-body-content"></div>
+    <div class="detail-actions" id="detail-actions-content"></div>
+  </div>
+</div>
+
+<!-- Form Panel -->
+<div class="form-overlay" id="form-overlay">
+  <div class="form-panel">
+    <div class="form-panel-header">
+      <button class="form-close" id="form-close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <div class="form-panel-title" id="form-panel-title">Nuevo contrato</div>
+      <div class="form-panel-sub" id="form-panel-sub">Completá los campos obligatorios (*)</div>
+    </div>
+    <div class="form-body"><div class="form-error" id="form-error"></div><div id="form-body-content"></div></div>
+    <div class="form-footer">
+      <button class="btn btn-ghost" onclick="App.closeForm()">Cancelar</button>
+      <button class="btn btn-primary" id="form-save-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="20,6 9,17 4,12"/></svg>Guardar contrato</button>
+    </div>
+  </div>
+</div>
+
+<!-- Baja Modal -->
+<div class="modal-overlay" id="baja-modal">
+  <div class="modal-card">
+    <div class="modal-icon danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="9" y1="14" x2="15" y2="14"/></svg></div>
+    <div class="modal-title">Rescindir contrato</div>
+    <div class="modal-desc">Estás por dar de baja a <strong id="baja-nombre">—</strong>. El contrato pasará al estado Rescindido.</div>
+    <div class="modal-field"><label>Fecha de rescisión *</label><input type="date" id="baja-fecha"></div>
+    <div class="modal-field"><label>Motivo</label><textarea id="baja-motivo" placeholder="Motivo de la rescisión…"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="modal-cancel">Cancelar</button>
+      <button class="btn btn-danger" id="modal-confirm-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="9" y1="14" x2="15" y2="14"/></svg>Confirmar baja</button>
+    </div>
+  </div>
+</div>
+
+<!-- KPI Modal -->
+<div class="modal-overlay" id="kpi-modal">
+  <div class="modal-card" style="width:520px;max-width:95vw">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div id="kpi-modal-icon" style="width:32px;height:32px;flex-shrink:0"></div>
+        <div id="kpi-modal-title" style="font-size:1.05rem;font-weight:700;color:var(--slate-900)">—</div>
+      </div>
+      <button class="detail-close" id="kpi-modal-close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div style="display:flex;border-bottom:1px solid var(--slate-200);margin-bottom:16px">
+      <div class="kpi-tab active" data-tab="lista" style="padding:8px 14px;font-size:0.82rem;font-weight:600;cursor:pointer;border-bottom:2px solid var(--azure-400);color:var(--azure-500)">Lista</div>
+      <div class="kpi-tab" data-tab="equipo" style="padding:8px 14px;font-size:0.82rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:var(--slate-500)">Por equipo</div>
+      <div class="kpi-tab" data-tab="tipo" style="padding:8px 14px;font-size:0.82rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:var(--slate-500)">Por tipo</div>
+      <div class="kpi-tab" data-tab="evolucion" style="padding:8px 14px;font-size:0.82rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:var(--slate-500)">Evolución</div>
+    </div>
+    <div id="kpi-modal-body" style="max-height:360px;overflow-y:auto;min-height:120px"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:12px;border-top:1px solid var(--slate-100)">
+      <span style="font-size:0.75rem;color:var(--slate-400)">Clic en un contrato para ver el detalle</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="App.closeKpiModal()">Cerrar</button>
+        <button class="btn btn-primary btn-sm" id="kpi-modal-goto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>Ver todos</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Changes Panel -->
+<div class="changes-overlay" id="changes-overlay">
+  <div class="changes-panel">
+    <div class="changes-header" style="position:relative">
+      <div class="changes-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:var(--azure-400)"><polyline points="1,4 1,10 7,10"/><path d="M3.51 15a9 9 0 1 0 .49-5"/></svg>Cambios del último mes</div>
+      <div class="changes-sub" id="changes-sub">—</div>
+      <button class="changes-close" id="changes-close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="ch-tabs">
+      <div class="ch-tab active" data-filter="Todos">Todos</div>
+      <div class="ch-tab" data-filter="Comisión">Comisión</div>
+      <div class="ch-tab" data-filter="Equipo">Equipo</div>
+      <div class="ch-tab" data-filter="Tipo">Tipo</div>
+    </div>
+    <div class="ch-body" id="ch-body"></div>
+  </div>
+</div>
+
+<!-- Legajo Panel -->
+<div class="form-overlay" id="legajo-add-panel">
+  <div class="form-panel" style="width:420px">
+    <div class="form-panel-header">
+      <button class="form-close" id="legajo-close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <div class="form-panel-title" id="legajo-panel-title">Cargar link de legajo</div>
+      <div class="form-panel-sub" id="legajo-nombre">—</div>
+    </div>
+    <div class="form-body">
+      <div class="form-section-title">Link del legajo en SharePoint</div>
+      <div class="form-grid" style="grid-template-columns:1fr">
+        <div class="form-group"><label>URL de SharePoint <span class="req">*</span></label><input class="form-input" id="legajo-url-input" placeholder="https://balanz.sharepoint.com/..."></div>
+        <div class="form-group"><label>Nombre del legajo (opcional)</label><input class="form-input" id="legajo-texto-input" placeholder="Ej: Hernan Schvarz (GB)"></div>
+      </div>
+    </div>
+    <div class="form-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('legajo-add-panel').classList.remove('open')">Cancelar</button>
+      <button class="btn btn-primary" id="legajo-save-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="20,6 9,17 4,12"/></svg>Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Adenda Panel -->
+<div class="form-overlay" id="adenda-panel">
+  <div class="form-panel" style="width:440px">
+    <div class="form-panel-header">
+      <button class="form-close" id="adenda-close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <div class="form-panel-title">Nueva adenda</div>
+      <div class="form-panel-sub" id="adenda-nombre">—</div>
+    </div>
+    <div class="form-body">
+      <div class="form-section-title">Datos de la modificación</div>
+      <div class="form-grid" style="grid-template-columns:1fr">
+        <div class="form-group"><label>Modificación <span class="req">*</span></label><input class="form-input" id="adenda-modificacion" placeholder="Ej: cambio de porcentaje al 70%"></div>
+        <div class="form-group"><label>Fecha <span class="req">*</span></label><input class="form-input" id="adenda-fecha" type="date"></div>
+        <div class="form-group"><label>Observaciones</label><textarea class="form-textarea" id="adenda-obs" placeholder="Detalles adicionales…"></textarea></div>
+      </div>
+    </div>
+    <div class="form-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('adenda-panel').classList.remove('open')">Cancelar</button>
+      <button class="btn btn-primary" id="adenda-save-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="20,6 9,17 4,12"/></svg>Guardar adenda</button>
+    </div>
+  </div>
+</div>
+
+<div class="saving-toast" id="saving-toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/contratos.js"></script>
+<script src="js/alertas.js"></script>
+<script src="js/form.js"></script>
+<script src="js/app.js"></script>
+<script>
+  document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('es-AR',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
+  document.addEventListener('app:navigate', (e) => {
+    if (e.detail.page==='dashboard') {
+      const alerts = App.getAlerts();
+      const badge = document.getElementById('nav-badge-alertas');
+      if (badge) { const t=alerts.incompletos+alerts.sinCRM+alerts.cuitErrors; badge.textContent=t; badge.className='badge'+(t>20?'':' amber'); }
+    }
+  });
+  App.init();
+</script>
+</body>
+</html>
