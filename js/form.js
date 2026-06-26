@@ -12,7 +12,11 @@ const FormPanel = (() => {
   const TIPOS = [{ v:'AP', l:'AP — Agente Productor' },{ v:'REF', l:'REF — Referenciador' },{ v:'PE', l:'PE — Productor Exclusivo' },{ v:'AAGI', l:'AAGI — Institucional' }];
   const CONDICION_IVA = ['Responsable Inscripto','Monotributista','Exento','Consumidor Final'];
   const MONEDAS = ['Pesos','Dólares','USD'];
-  const PORCENTAJES = ['40%','45%','45-50%','50%','50-70%','55%','60%','60-70%','62.50%','65%','70%','40-60%','15%','Otro'];
+  const PORCENTAJES = [
+    '10%','15%','20%','25%','30%','35%','40%','45%','50%','55%','60%','62.50%','65%','70%',
+    '40% - 60%','45% - 50%','50% - 60%','50% - 70%','55% - 60%','55% - 65%','60% - 65%','60% - 70%','65% - 70%',
+    '50% on - 70% off','50% on - 75% off','Otro'
+  ];
 
   function buildForm(c) {
     const today = new Date().toISOString().split('T')[0];
