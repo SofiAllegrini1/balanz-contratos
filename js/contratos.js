@@ -126,6 +126,18 @@ const Contratos = (() => {
     const equipo = document.getElementById('filter-equipo')?.value||'';
     const moneda = document.getElementById('filter-moneda')?.value||'';
     const legajo = document.getElementById('filter-legajo')?.value||'';
+    const desde  = document.getElementById('filter-alta-desde')?.value||'';
+    const hasta  = document.getElementById('filter-alta-hasta')?.value||'';
+
+    const parseDate = value => {
+      if (!value) return null;
+      const d = new Date(value);
+      return Number.isNaN(d.getTime()) ? null : d;
+    };
+
+    const desdeDate = parseDate(desde);
+    const hastaDate = parseDate(hasta);
+    if (hastaDate) hastaDate.setHours(23,59,59,999);
 
     const base = _tab==='vigentes'
       ? App.getContratos().filter(c=>c.estado==='Vigente')
@@ -137,7 +149,10 @@ const Contratos = (() => {
       const meq = !equipo||c.equipo===equipo;
       const mm = !moneda||(c.moneda||'').toLowerCase().includes(moneda.toLowerCase());
       const ml = !legajo||(legajo==='con'?!!c.legajoUrl:!c.legajoUrl);
-      return ms&&mt&&meq&&mm&&ml;
+      const altaDate = c.fechaAltaContrato ? new Date(c.fechaAltaContrato) : null;
+      const md1 = !desdeDate || (altaDate && !Number.isNaN(altaDate.getTime()) && altaDate >= desdeDate);
+      const md2 = !hastaDate || (altaDate && !Number.isNaN(altaDate.getTime()) && altaDate <= hastaDate);
+      return ms&&mt&&meq&&mm&&ml&&md1&&md2;
     });
 
     _filtered.sort((a,b)=>(a.nombre||'').localeCompare(b.nombre||''));
@@ -182,10 +197,21 @@ const Contratos = (() => {
   function render() {
     populateEquipoFilter();
     applyFilters();
-    ['contratos-search','filter-tipo','filter-equipo','filter-moneda','filter-legajo'].forEach(id => {
+    ['contratos-search','filter-tipo','filter-equipo','filter-moneda','filter-legajo','filter-alta-desde','filter-alta-hasta'].forEach(id => {
       const el = document.getElementById(id);
       if (el) { el.oninput = applyFilters; el.onchange = applyFilters; }
     });
+    const lastMonthBtn = document.getElementById('filter-last-month');
+    if (lastMonthBtn) lastMonthBtn.onclick = () => {
+      const now = new Date();
+      const start = new Date(now.getFullYear(), now.getMonth()-1, now.getDate());
+      const end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const desdeEl = document.getElementById('filter-alta-desde');
+      const hastaEl = document.getElementById('filter-alta-hasta');
+      if (desdeEl) desdeEl.value = start.toISOString().slice(0,10);
+      if (hastaEl) hastaEl.value = end.toISOString().slice(0,10);
+      applyFilters();
+    };
     // Tab clicks
     document.querySelectorAll('.main-tab[data-tab]').forEach(tab => {
       tab.onclick = () => switchTab(tab.dataset.tab);

@@ -136,6 +136,9 @@
             <select class="filter-select" id="filter-equipo"><option value="">Todos los equipos</option></select>
             <select class="filter-select" id="filter-moneda"><option value="">Toda moneda</option><option value="Pesos">Pesos</option><option value="Dol">Dólares</option></select>
             <select class="filter-select" id="filter-legajo"><option value="">Todo legajo</option><option value="con">Con legajo</option><option value="sin">Sin legajo</option></select>
+            <input class="filter-select" type="date" id="filter-alta-desde" title="Alta desde">
+            <input class="filter-select" type="date" id="filter-alta-hasta" title="Alta hasta">
+            <button class="btn btn-ghost btn-sm" type="button" id="filter-last-month">Último mes</button>
           </div>
           <table class="data-table"><thead id="contratos-thead"><tr><th>Nombre / CUIT</th><th>Tipo</th><th>Estado</th><th>Equipo</th><th>Alta</th><th>Comisión</th><th>Legajo</th></tr></thead><tbody id="contratos-tbody"></tbody></table>
           <div class="table-pagination"><div id="page-info">—</div><div class="pagination-btns" id="page-btns"></div></div>
