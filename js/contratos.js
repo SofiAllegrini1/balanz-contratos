@@ -54,7 +54,7 @@ const Contratos = (() => {
     if (!tbody) return;
 
     if (!pageData.length) {
-      tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state">${icon('search')}<p>No se encontraron contratos.</p></div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state">${icon('search')}<p>No se encontraron contratos.</p></div></td></tr>`;
       return;
     }
 
@@ -65,7 +65,8 @@ const Contratos = (() => {
           <td><span class="badge-tipo ${c.tipo}">${c.tipo}</span></td>
           <td>${statusBadge(c)}</td>
           <td style="color:var(--slate-600);font-size:0.8rem">${c.equipo||'—'}</td>
-          <td style="font-size:0.78rem;color:var(--slate-500)">${formatDate(c.fechaAltaContrato)}</td>
+          <td style="font-size:0.78rem;color:var(--slate-500)">${formatDate(c.fechaAltaBalanz||c.fechaAltaContrato)}</td>
+          <td style="font-size:0.78rem;color:var(--slate-500)">${formatDate(c.fechaAltaPE)}</td>
           <td>${c.porcentaje?`<span class="comision-badge">${c.porcentaje}</span>`:'<span style="color:var(--slate-400);font-size:0.78rem">—</span>'}</td>
           <td>${legajoBtn(c)}</td>
         </tr>
@@ -76,7 +77,8 @@ const Contratos = (() => {
           <td><div style="display:flex;flex-direction:column;gap:2px"><div class="table-name" title="${c.nombre}">${c.nombre}</div><div style="font-size:0.7rem;color:var(--slate-400)">${c.cuit||''}</div></div></td>
           <td><span class="badge-tipo ${c.tipo==='BAJA'?'REF':c.tipo}">${c.tipo==='BAJA'?'REF':c.tipo}</span></td>
           <td style="color:var(--slate-600);font-size:0.8rem">${c.equipo||'—'}</td>
-          <td style="font-size:0.78rem;color:var(--slate-500)">${formatDate(c.fechaAltaContrato)}</td>
+          <td style="font-size:0.78rem;color:var(--slate-500)">${formatDate(c.fechaAltaBalanz||c.fechaAltaContrato)}</td>
+          <td style="font-size:0.78rem;color:var(--slate-500)">${formatDate(c.fechaAltaPE)}</td>
           <td><span class="fecha-res">${formatDate(c.fechaRescision)||'—'}</span></td>
           <td>${c.porcentaje?`<span class="comision-badge">${c.porcentaje}</span>`:'<span style="color:var(--slate-400);font-size:0.78rem">—</span>'}</td>
           <td>${legajoBtn(c)}</td>
@@ -175,13 +177,13 @@ const Contratos = (() => {
     if (!thead) return;
     if (_tab==='vigentes') {
       thead.innerHTML = `<tr>
-        <th>Nombre / CUIT</th><th>Tipo</th><th>Estado</th><th>Equipo</th><th>Alta</th>
+        <th>Nombre / CUIT</th><th>Tipo</th><th>Estado</th><th>Equipo</th><th>Alta Balanz</th><th>Alta PE</th>
         <th><span style="display:flex;align-items:center;gap:4px">Comisión<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;opacity:.4" title="Porcentaje de comisión acordado en el contrato"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span></th>
         <th>Legajo</th>
       </tr>`;
     } else {
       thead.innerHTML = `<tr>
-        <th>Nombre / CUIT</th><th>Tipo</th><th>Equipo</th><th>Alta</th>
+        <th>Nombre / CUIT</th><th>Tipo</th><th>Equipo</th><th>Alta Balanz</th><th>Alta PE</th>
         <th style="color:#b91c1c">Fecha rescisión</th>
         <th>Comisión</th><th>Legajo</th>
       </tr>`;
@@ -288,7 +290,8 @@ const Contratos = (() => {
           <div class="detail-field"><label>Estado</label><span>${c.estado}</span></div>
           <div class="detail-field"><label>CUIT</label><span style="font-family:var(--font-mono);font-size:0.8rem">${c.cuit||'—'}</span></div>
           <div class="detail-field"><label>Persona</label><span>${c.persona||'—'}</span></div>
-          <div class="detail-field"><label>Alta</label><span>${formatDate(c.fechaAltaContrato)}</span></div>
+          <div class="detail-field"><label>Alta Balanz</label><span>${formatDate(c.fechaAltaBalanz||c.fechaAltaContrato)}</span></div>
+          <div class="detail-field"><label>Alta PE</label><span>${formatDate(c.fechaAltaPE)}</span></div>
           ${c.fechaRescision?`<div class="detail-field"><label>Rescisión</label><span style="color:var(--red-500);font-weight:600">${formatDate(c.fechaRescision)}</span></div>`:''}
           <div class="detail-field"><label>Localidad</label><span>${c.localidad||'—'}</span></div>
           <div class="detail-field"><label>Cond. IVA</label><span>${c.condicionIVA||'—'}</span></div>

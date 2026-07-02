@@ -61,8 +61,12 @@ const FormPanel = (() => {
           <input class="form-input" id="f-localidad" value="${c?.localidad||''}" placeholder="Ej: Buenos Aires">
         </div>
         <div class="form-group">
-          <label>Fecha de alta <span class="req">*</span></label>
-          <input class="form-input" id="f-fecha" type="date" value="${c?.fechaAltaContrato||today}" required>
+          <label>Fecha de alta en Balanz <span class="req">*</span></label>
+          <input class="form-input" id="f-fecha-balanz" type="date" value="${c?.fechaAltaBalanz||c?.fechaAltaContrato||today}" required>
+        </div>
+        <div class="form-group">
+          <label>Fecha de alta en PE</label>
+          <input class="form-input" id="f-fecha-pe" type="date" value="${c?.fechaAltaPE||''}">
         </div>
         <div class="form-group">
           <label>Matrícula CNV</label>
@@ -162,7 +166,9 @@ const FormPanel = (() => {
       mail: document.getElementById('f-mail')?.value.trim() || '',
       condicionIVA: document.getElementById('f-iva')?.value || '',
       localidad: document.getElementById('f-localidad')?.value.trim() || '',
-      fechaAltaContrato: document.getElementById('f-fecha')?.value || '',
+      fechaAltaBalanz: document.getElementById('f-fecha-balanz')?.value || '',
+      fechaAltaPE: document.getElementById('f-fecha-pe')?.value || '',
+      fechaAltaContrato: document.getElementById('f-fecha-balanz')?.value || '',
       matriculaCNV: document.getElementById('f-matricula')?.value.trim() || '',
       nroRef: document.getElementById('f-nroref')?.value.trim() || '',
       equipo: document.getElementById('f-equipo')?.value || '',
@@ -180,7 +186,7 @@ const FormPanel = (() => {
     const data = getFormData();
     const errEl = document.getElementById('form-error');
     if (!data.nombre || !data.cuit || !data.tipo || !data.equipo || !data.fechaAltaContrato) {
-      errEl.textContent = 'Completá los campos obligatorios: Nombre, CUIT, Tipo, Equipo y Fecha.';
+      errEl.textContent = 'Completá los campos obligatorios: Nombre, CUIT, Tipo, Equipo y Fecha de alta en Balanz.';
       errEl.classList.add('show');
       return;
     }
